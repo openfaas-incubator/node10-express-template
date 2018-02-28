@@ -13,24 +13,67 @@ app.use(bodyParser.json());
 app.use(bodyParser.raw());
 app.use(bodyParser.text({ type : "text/*" }));
 
+class FunctionEvent {
+    constructor(req) {
+        this.body = req.body;
+        this.headers = req.headers;
+        this.method = req.method;
+        this.query = req.query;
+    }
+}
+
+class FunctionContext {
+    constructor(cb) {
+        this.value = 200;
+        this.cb = cb;
+    }
+
+    status(value) {
+        if(!value) {
+            return this.value;
+        }
+
+        this.value = value;
+        return this;
+    }
+
+    succeed(value) {
+        let err;
+        this.cb(err, value);
+    }
+    fail(value) {
+        let message;
+        this.cb(value, message);
+    }
+}
+
 var middleware = (req, res) => {
-    handler(req.body, (err, functionResult) => {
+    let cb = (err, functionResult) => {
         if (err) {
-            return console.error(err);
+            console.error(err);
+            return res.status(500).send(err);
         }
+
         if(isArray(functionResult) || isObject(functionResult)) {
-            res.send(JSON.stringify(functionResult));
+            res.status(fnContext.status()).send(JSON.stringify(functionResult));
         } else {
-            res.send(functionResult);
+            res.status(fnContext.status()).send(functionResult);
         }
-    });
+    };
+
+    let fnEvent = new FunctionEvent(req);
+    let fnContext = new FunctionContext(cb);
+
+    handler(fnEvent, fnContext, cb);
 };
 
 app.post('/', middleware);
 app.get('/', middleware);
 
-app.listen(3000, () => {
-    console.log('OpenFaaS Node.js listening on port: 3000')
+const port = process.env.http_port || 3000;
+
+app.listen(port, () => {
+    console.log(`OpenFaaS Node.js listening on port: ${port}`)
 });
 
 let isArray = (a) => {
