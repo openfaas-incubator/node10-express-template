@@ -12,6 +12,7 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
 app.use(bodyParser.text({ type : "text/*" }));
+app.disable('x-powered-by');
 
 class FunctionEvent {
     constructor(req) {
