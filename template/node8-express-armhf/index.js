@@ -20,6 +20,7 @@ class FunctionEvent {
         this.headers = req.headers;
         this.method = req.method;
         this.query = req.query;
+        this.path = req.path;
     }
 }
 
