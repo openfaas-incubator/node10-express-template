@@ -17,7 +17,7 @@ The template makes use of the OpenFaaS incubator project [of-watchdog](https://g
 ## Trying the template
 
 ```
-$ faas template pull https://github.com/alexellis/node8-express-template 
+$ faas template pull https://github.com/openfaas-incubator/node8-express-template
 $ faas new --lang node8-express
 ```
 
