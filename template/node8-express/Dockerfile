@@ -3,11 +3,11 @@ FROM node:8.9.4-alpine
 RUN addgroup -S app && adduser -S -g app app
 
 # Alternatively use ADD https:// (which will not be cached by Docker builder)
-RUN apk --no-cache add curl \
+RUN apk --no-cache add curl ca-certificates \
     && echo "Pulling watchdog binary from Github." \
     && curl -sSLf https://github.com/openfaas-incubator/of-watchdog/releases/download/0.4.0/of-watchdog > /usr/bin/fwatchdog \
     && chmod +x /usr/bin/fwatchdog \
-    && apk del curl --no-cache
+    && apk del curl
 
 WORKDIR /root/
 
@@ -49,11 +49,11 @@ ENV fprocess="node index.js"
 ENV mode="http"
 ENV upstream_url="http://127.0.0.1:3000"
 
-ENV exec_timeout="20s" 
-ENV write_timeout="25s" 
-ENV read_timeout="25s" 
+ENV exec_timeout="10s"
+ENV write_timeout="15s"
+ENV read_timeout="15s"
 
-HEALTHCHECK --interval=1s CMD [ -e /tmp/.lock ] || exit 1
+HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
 CMD ["fwatchdog"]
 
