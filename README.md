@@ -80,6 +80,21 @@ module.exports = (event, context, callback) => {
 }
 ```
 
+Example with redirect (setting Location header):
+
+```js
+"use strict"
+
+module.exports = (event, context) => {
+  context
+    .headers({'Location': 'https://www.google.com/'})
+    .status(307)    // Temporary
+    .succeed('Page has moved.')
+}
+```
+
+Other reference:
+
 * `.status(code)` - overrides the status code used by `fail`, or `succeed`
 * `.fail(object)` - returns a 500 error if `.status(code)` was not called prior to that
 * `.succeed(object)` - returns a 200 code if `.status(code)` was not called prior to that
