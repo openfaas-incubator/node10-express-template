@@ -1,4 +1,4 @@
-OpenFaaS Node.js 8 and Express.js template
+OpenFaaS Node.js 10 (LTS) and Express.js template
 =============================================
 
 This template provides additional context and control over the HTTP response from your function.
