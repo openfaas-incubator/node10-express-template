@@ -11,14 +11,14 @@ The template makes use of the OpenFaaS incubator project [of-watchdog](https://g
 
 ## Supported platforms
 
-* x86_64 - `node8-express`
-* armhf - `node8-express-armhf`
+* x86_64 - `node10-express`
+* armhf - `node10-express-armhf`
 
 ## Trying the template
 
 ```
-$ faas template pull https://github.com/openfaas-incubator/node8-express-template
-$ faas new --lang node8-express
+$ faas template pull https://github.com/openfaas-incubator/node10-express-template
+$ faas new --lang node10-express
 ```
 
 ## Example usage

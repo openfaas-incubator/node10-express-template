@@ -1,11 +1,11 @@
-FROM node:8.9.4-alpine
+FROM node:10.12.0-alpine
 
 RUN addgroup -S app && adduser -S -g app app
 
 # Alternatively use ADD https:// (which will not be cached by Docker builder)
 RUN apk --no-cache add curl ca-certificates \
     && echo "Pulling watchdog binary from Github." \
-    && curl -sSLf https://github.com/openfaas-incubator/of-watchdog/releases/download/0.4.1/of-watchdog > /usr/bin/fwatchdog \
+    && curl -sSLf https://github.com/openfaas-incubator/of-watchdog/releases/download/0.4.1/of-watchdog-armhf > /usr/bin/fwatchdog \
     && chmod +x /usr/bin/fwatchdog \
     && apk del curl
 
