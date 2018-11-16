@@ -23,7 +23,7 @@ $ faas new --lang node10-express
 
 ## Example usage
 
-Example with success and JSON body:
+### Success and JSON body
 
 ```js
 "use strict"
@@ -39,7 +39,7 @@ module.exports = (event, context) => {
 }
 ```
 
-Example of a custom HTTP status code:
+### Custom HTTP status code
 
 ```js
 "use strict"
@@ -54,7 +54,7 @@ module.exports = (event, context) => {
 }
 ```
 
-Example of failure and plain-text body:
+### Failure code and plain-text body:
 
 ```js
 "use strict"
@@ -68,7 +68,7 @@ module.exports = (event, context) => {
 }
 ```
 
-Example with use of optional `callback` parameter:
+### Using the optional `callback` parameter:
 
 ```js
 "use strict"
@@ -80,7 +80,7 @@ module.exports = (event, context, callback) => {
 }
 ```
 
-Example with redirect (setting Location header):
+### Redirect (setting Location header):
 
 ```js
 "use strict"
@@ -90,6 +90,29 @@ module.exports = (event, context) => {
     .headers({'Location': 'https://www.google.com/'})
     .status(307)    // Temporary
     .succeed('Page has moved.')
+}
+```
+
+
+### Path-based routing (multiple-handlers):
+
+```js
+"use strict"
+
+module.exports = (event, context) => {
+  if(event.path == "/login") {
+      return login(event, context);
+  }
+
+  return context
+        .status(200)
+        .succeed('Welcome to the homepage.')
+}
+
+function login(event, context) {
+    return context
+        .status(200)
+        .succeed('Please log in.')
 }
 ```
 
