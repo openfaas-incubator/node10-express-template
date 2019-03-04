@@ -26,17 +26,17 @@ class FunctionEvent {
 
 class FunctionContext {
     constructor(cb) {
-        this.value = 200;
         this.cb = cb;
+        this.statusCode;
         this.headerValues = {};
     }
 
-    status(value) {
-        if(!value) {
-            return this.value;
+    status(statusCode) {
+        if(!statusCode) {
+            return this.statusCode;
         }
 
-        this.value = value;
+        this.statusCode = statusCode;
         return this;
     }
 
@@ -46,25 +46,23 @@ class FunctionContext {
         }
 
         this.headerValues = value;
-        return this;    
+        return this;
     }
 
-    succeed(value) {
-        let err;
-        this.cb(err, value);
+    succeed(message) {
+        this.cb(200, message);
     }
 
-    fail(value) {
-        let message;
-        this.cb(value, message);
+    fail(message) {
+        this.cb(500, message);
     }
 }
 
 var middleware = (req, res) => {
-    let cb = (err, functionResult) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send(err);
+    let cb = (statusCode, functionResult) => {
+        // If fnContext.status() has not been called, use the default status code of 200 (succeed), or 500 (fail)
+        if (!fnContext.status()) {
+            fnContext.status(statusCode);
         }
 
         if(isArray(functionResult) || isObject(functionResult)) {
@@ -82,9 +80,6 @@ var middleware = (req, res) => {
 
 app.post('/*', middleware);
 app.get('/*', middleware);
-app.patch('/*', middleware);
-app.put('/*', middleware);
-app.delete('/*', middleware);
 
 const port = process.env.http_port || 3000;
 
@@ -99,3 +94,5 @@ let isArray = (a) => {
 let isObject = (a) => {
     return (!!a) && (a.constructor === Object);
 };
+
+module.exports = app;
