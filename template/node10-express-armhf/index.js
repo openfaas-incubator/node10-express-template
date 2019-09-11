@@ -9,9 +9,10 @@ const handler = require('./function/handler');
 const bodyParser = require('body-parser')
 
 // app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(bodyParser.raw());
-app.use(bodyParser.text({ type : "text/*" }));
+// limit 50MB
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.raw({ limit: "50mb" }));
+app.use(bodyParser.text({ type: "text/*", limit: "50mb" }));
 app.disable('x-powered-by');
 
 class FunctionEvent {
@@ -32,7 +33,7 @@ class FunctionContext {
     }
 
     status(value) {
-        if(!value) {
+        if (!value) {
             return this.value;
         }
 
@@ -41,12 +42,12 @@ class FunctionContext {
     }
 
     headers(value) {
-        if(!value) {
+        if (!value) {
             return this.headerValues;
         }
 
         this.headerValues = value;
-        return this;    
+        return this;
     }
 
     succeed(value) {
@@ -67,7 +68,7 @@ var middleware = (req, res) => {
             return res.status(500).send(err);
         }
 
-        if(isArray(functionResult) || isObject(functionResult)) {
+        if (isArray(functionResult) || isObject(functionResult)) {
             res.set(fnContext.headers()).status(fnContext.status()).send(JSON.stringify(functionResult));
         } else {
             res.set(fnContext.headers()).status(fnContext.status()).send(functionResult);
