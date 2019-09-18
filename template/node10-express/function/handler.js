@@ -8,12 +8,10 @@ const delayCallback = cb => {
     setTimeout(() => cb(delay),  delay * 1000);
 }
 
-module.exports = (context, next) => {
-    console.log("handler/IN");
-
+module.exports = (event, context, next) => {
     delayCallback(delay => {
-        const result =             {
-            status: "You said: " + JSON.stringify(context.body),
+        const result = {
+            status: "You said: " + JSON.stringify(event.body),
             delay
         };
         
@@ -30,11 +28,11 @@ module.exports = (context, next) => {
 
 // Promise version
 /*
-module.exports = context => new Promise((resolve, reject) => {
+module.exports = (event, context) => new Promise((resolve, reject) => {
     delayPromise()
     .then(delay => {
         const result =             {
-            status: "You said: " + JSON.stringify(context.body),
+            status: "You said: " + JSON.stringify(event.body),
             delay
         };
     
@@ -49,11 +47,11 @@ module.exports = context => new Promise((resolve, reject) => {
 
 // async/await version
 /*
-module.exports = async context => {  
+module.exports = async (event, context) => {  
     const delay = await delayPromise();
 
     const result =             {
-        status: "You said: " + JSON.stringify(context.body),
+        status: "You said: " + JSON.stringify(event.body),
         delay
     };
 

@@ -14,14 +14,20 @@ app.use(bodyParser.raw());
 app.use(bodyParser.text({ type : "text/*" }));
 app.disable('x-powered-by');
 
-class FunctionContext {
+let isObject = a => !!a && (a.constructor === Object);
+
+class FunctionEvent {
     constructor(req) {
         this.body = req.body;
         this.headers = req.headers;
         this.method = req.method;
         this.query = req.query;
         this.path = req.path;
+    }
+}
 
+class FunctionContext {
+    constructor() {
         this.statusCode = 200;
         this.headerValues = {};       
     }
@@ -43,7 +49,7 @@ class FunctionContext {
     }
 
     succeed(value) {
-        this.succeedValue = (isArray(value) || isObject(value)) ? JSON.stringify(value) : value;
+        this.succeedValue = (Array.isArray(value) || isObject(value)) ? JSON.stringify(value) : value;
     }
 
     fail(message) {
@@ -53,7 +59,8 @@ class FunctionContext {
 }
 
 const middleware = (req, res) => {
-    let fnContext = new FunctionContext(req);
+    let fnEvent = new FunctionEvent(req);
+    let fnContext = new FunctionContext();
 
     const sendFail = () => {
         res.status(500).send(fnContext.failMessage);
@@ -68,11 +75,9 @@ const middleware = (req, res) => {
         }
     }
 
-    let next = () => {
-        handleResult(fnContext);
-    }
+    let next = () => handleResult(fnContext);
 
-    const result = handler(fnContext, next);
+    const result = handler(fnEvent, fnContext, next);
 
     if (result instanceof FunctionContext) {
         handleResult(result);
@@ -98,11 +103,3 @@ const port = process.env.http_port || 3000;
 app.listen(port, () => {
     console.log(`OpenFaaS Node.js listening on port: ${port}`)
 });
-
-let isArray = (a) => {
-    return (!!a) && (a.constructor === Array);
-};
-
-let isObject = (a) => {
-    return (!!a) && (a.constructor === Object);
-};
